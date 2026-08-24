@@ -1,0 +1,696 @@
+This is a complete, single-page HTML document for a Duolingo-style word arrangement game. You can rearrange scrambled letters to spell the correct word, with a clean and engaging interface.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧩 Word Arranger • Duolingo style</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #e4f0fa 0%, #c7dbf5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .game-container {
+      max-width: 700px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 60px;
+      padding: 30px 24px 36px;
+      box-shadow: 0 30px 60px rgba(30, 50, 100, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      transition: 0.2s;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1f3a6b;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    header h1 span {
+      background: #1f3a6b;
+      color: white;
+      font-size: 0.8rem;
+      padding: 4px 18px;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      background: rgba(240, 245, 255, 0.5);
+      padding: 10px 18px;
+      border-radius: 60px;
+    }
+
+    .badge {
+      background: #1f3a6b;
+      color: white;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge.outline {
+      background: transparent;
+      color: #1f3a6b;
+      border: 2px solid #1f3a6b;
+    }
+
+    .emoji-hint {
+      font-size: 4.5rem;
+      text-align: center;
+      margin: 10px 0 6px;
+      line-height: 1.2;
+    }
+
+    .word-length {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: #2f4b7a;
+      margin-bottom: 12px;
+      letter-spacing: 2px;
+    }
+
+    .spell-slot {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      min-height: 70px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 60px;
+      padding: 16px 18px;
+      margin: 12px 0 18px;
+      border: 2px dashed #b0c8e5;
+      transition: 0.2s;
+    }
+
+    .spell-slot .letter-tile {
+      background: white;
+      border-radius: 16px;
+      padding: 8px 14px;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f3a6b;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+      border: 2px solid #cddef5;
+      min-width: 48px;
+      text-align: center;
+      cursor: default;
+      animation: popIn 0.2s ease;
+    }
+
+    .letter-pool {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 0 20px;
+      min-height: 70px;
+      padding: 6px 4px;
+    }
+
+    .letter-pool .letter-tile {
+      background: white;
+      border-radius: 20px;
+      padding: 12px 20px;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1f3a6b;
+      box-shadow: 0 6px 12px rgba(30, 50, 100, 0.08);
+      border: 2px solid #b8cfe9;
+      cursor: pointer;
+      transition: 0.15s;
+      min-width: 56px;
+      text-align: center;
+      user-select: none;
+    }
+
+    .letter-pool .letter-tile:hover {
+      transform: scale(0.95);
+      background: #e4effa;
+      border-color: #6f94c7;
+    }
+
+    .letter-pool .letter-tile:active {
+      transform: scale(0.90);
+    }
+
+    .letter-pool .letter-tile.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+      transform: scale(0.9);
+    }
+
+    .feedback {
+      min-height: 50px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 8px 6px;
+      margin: 8px 0 12px;
+      border-radius: 60px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .btn {
+      border: none;
+      background: #1f3a6b;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      box-shadow: 0 8px 16px rgba(30, 50, 100, 0.10);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover { background: #142d52; transform: scale(0.97); }
+    .btn.secondary { background: #4f7db3; }
+    .btn.secondary:hover { background: #3b6391; }
+    .btn.success { background: #2a7a4b; }
+    .btn.success:hover { background: #1d5f38; }
+    .btn.warning { background: #b2772b; }
+    .btn.warning:hover { background: #8f5e1f; }
+
+    .btn:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .progress {
+      height: 8px;
+      background: #d0dff0;
+      border-radius: 60px;
+      overflow: hidden;
+      margin: 12px 0 6px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #1f3a6b, #6a8fc9);
+      transition: 0.4s ease;
+    }
+
+    .result-box {
+      text-align: center;
+      padding: 20px 6px;
+    }
+
+    .result-box h2 { font-size: 2.6rem; color: #1f3a6b; }
+    .star { font-size: 4rem; line-height: 1.2; }
+
+    @keyframes popIn {
+      0% { transform: scale(0.8); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @media (max-width: 500px) {
+      .game-container { padding: 20px 14px; }
+      .letter-pool .letter-tile { padding: 10px 14px; font-size: 1.8rem; min-width: 48px; }
+      .spell-slot .letter-tile { font-size: 1.6rem; padding: 6px 10px; min-width: 40px; }
+      .emoji-hint { font-size: 3.2rem; }
+      header h1 { font-size: 1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="game-container" id="app">
+  <header>
+    <h1>
+      🧩 Word Arranger
+      <span>Duolingo style</span>
+    </h1>
+  </header>
+
+  <!-- MAIN GAME -->
+  <div id="gameScreen">
+    <div class="top-bar">
+      <span class="badge">⭐ <span id="scoreDisplay">0</span></span>
+      <span class="badge">❤️ <span id="livesDisplay">3</span></span>
+      <span class="badge outline">#<span id="questionCounter">1</span>/<span id="totalQuestions">10</span></span>
+    </div>
+
+    <div class="progress">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="emoji-hint" id="emojiHint">🍎</div>
+    <div class="word-length" id="wordLengthHint">4 letters</div>
+
+    <!-- built word -->
+    <div class="spell-slot" id="spellSlot"></div>
+
+    <!-- scrambled letters -->
+    <div class="letter-pool" id="letterPool"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="actions">
+      <button class="btn warning" id="shuffleBtn" onclick="shuffleLetters()">🔀 Shuffle</button>
+      <button class="btn secondary" id="clearBtn" onclick="clearWord()">✖ Clear</button>
+      <button class="btn success" id="checkBtn" onclick="checkWord()">✅ Check</button>
+      <button class="btn" id="nextBtn" onclick="nextWord()" style="display:none;">Next ➜</button>
+    </div>
+
+    <div style="margin-top:16px; text-align:center;">
+      <button class="btn" style="background:#6f4f8a;" onclick="resetGame()">🔄 New Game</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="resultScreen" style="display:none;">
+    <div class="result-box">
+      <div class="star">🏆</div>
+      <h2>Well done!</h2>
+      <p style="font-size:1.8rem; margin:10px;">Your score</p>
+      <p style="font-size:3.6rem; font-weight:800;" id="finalScore">0 ⭐</p>
+      <p id="resultMessage" style="font-size:1.3rem; margin:12px;"></p>
+      <button class="btn" onclick="resetGame()">🔄 Play Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // --------------------------------------------------------------
+  //  WORD BANK  (emoji + word)
+  // --------------------------------------------------------------
+  const WORDS = [
+    { word: 'APPLE', emoji: '🍎' },
+    { word: 'BALL', emoji: '⚽' },
+    { word: 'CAT', emoji: '🐱' },
+    { word: 'DOG', emoji: '🐶' },
+    { word: 'FISH', emoji: '🐟' },
+    { word: 'LION', emoji: '🦁' },
+    { word: 'MOON', emoji: '🌙' },
+    { word: 'STAR', emoji: '⭐' },
+    { word: 'BOOK', emoji: '📚' },
+    { word: 'TREE', emoji: '🌳' },
+    { word: 'CLOUD', emoji: '☁️' },
+    { word: 'RAIN', emoji: '🌧️' },
+    { word: 'SNOW', emoji: '❄️' },
+    { word: 'HEART', emoji: '❤️' },
+    { word: 'SMILE', emoji: '😊' },
+    { word: 'HAPPY', emoji: '😄' },
+    { word: 'BIRD', emoji: '🐦' },
+    { word: 'FROG', emoji: '🐸' },
+    { word: 'DUCK', emoji: '🦆' },
+    { word: 'BEAR', emoji: '🐻' },
+    { word: 'HORSE', emoji: '🐴' },
+    { word: 'MOUSE', emoji: '🐭' },
+    { word: 'HONEY', emoji: '🍯' },
+    { word: 'MILK', emoji: '🥛' },
+    { word: 'BREAD', emoji: '🍞' },
+    { word: 'CAKE', emoji: '🎂' },
+    { word: 'JUICE', emoji: '🧃' },
+    { word: 'WATER', emoji: '💧' },
+    { word: 'FIRE', emoji: '🔥' },
+    { word: 'ROCK', emoji: '🪨' },
+  ];
+
+  // --------------------------------------------------------------
+  //  GAME STATE
+  // --------------------------------------------------------------
+  let currentWords = [];
+  let currentIndex = 0;
+  let score = 0;
+  let lives = 3;
+  let selectedLetters = [];      // letters in the slot (ordered)
+  let availableLetters = [];     // letters in pool (objects: {letter, used})
+  let currentWordObj = null;
+  let answered = false;
+  let totalQuestions = 10;
+
+  // DOM refs
+  const spellSlot = document.getElementById('spellSlot');
+  const letterPool = document.getElementById('letterPool');
+  const feedback = document.getElementById('feedback');
+  const scoreDisplay = document.getElementById('scoreDisplay');
+  const livesDisplay = document.getElementById('livesDisplay');
+  const questionCounter = document.getElementById('questionCounter');
+  const totalQuestionsSpan = document.getElementById('totalQuestions');
+  const progressBar = document.getElementById('progressBar');
+  const emojiHint = document.getElementById('emojiHint');
+  const wordLengthHint = document.getElementById('wordLengthHint');
+  const nextBtn = document.getElementById('nextBtn');
+  const checkBtn = document.getElementById('checkBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+
+  // --------------------------------------------------------------
+  //  INIT
+  // --------------------------------------------------------------
+  function initGame() {
+    // pick random 10–12 words
+    const shuffled = shuffleArray([...WORDS]);
+    currentWords = shuffled.slice(0, Math.min(12, shuffled.length));
+    totalQuestions = currentWords.length;
+    totalQuestionsSpan.innerText = totalQuestions;
+    currentIndex = 0;
+    score = 0;
+    lives = 3;
+    updateStats();
+    loadWord();
+  }
+
+  function loadWord() {
+    if (currentIndex >= currentWords.length) {
+      finishGame();
+      return;
+    }
+
+    answered = false;
+    nextBtn.style.display = 'none';
+    checkBtn.disabled = false;
+    clearBtn.disabled = false;
+    shuffleBtn.disabled = false;
+    feedback.innerText = '';
+    feedback.style.background = 'rgba(255,255,255,0.3)';
+
+    currentWordObj = currentWords[currentIndex];
+    const word = currentWordObj.word;
+    const letters = word.split('');
+
+    // update emoji & length hint
+    emojiHint.innerText = currentWordObj.emoji;
+    wordLengthHint.innerText = `${letters.length} letters`;
+
+    // reset selected
+    selectedLetters = [];
+
+    // build available letters (scrambled)
+    const shuffledLetters = shuffleArray([...letters]);
+    availableLetters = shuffledLetters.map(ch => ({ letter: ch, used: false }));
+
+    // update UI
+    renderSpellSlot();
+    renderLetterPool();
+    updateStats();
+    updateProgress();
+  }
+
+  // --------------------------------------------------------------
+  //  RENDER
+  // --------------------------------------------------------------
+  function renderSpellSlot() {
+    spellSlot.innerHTML = '';
+    if (selectedLetters.length === 0) {
+      const placeholder = document.createElement('div');
+      placeholder.style.cssText = 'color:#8ca3c0; font-size:1.2rem; font-weight:400; padding:6px 10px;';
+      placeholder.innerText = '⬅️ tap letters to build';
+      spellSlot.appendChild(placeholder);
+      return;
+    }
+    selectedLetters.forEach((ch, idx) => {
+      const tile = document.createElement('div');
+      tile.className = 'letter-tile';
+      tile.innerText = ch;
+      tile.style.animationDelay = (idx * 0.04) + 's';
+      // click on slot tile to remove it (pop back)
+      tile.onclick = () => removeLetterFromSlot(idx);
+      spellSlot.appendChild(tile);
+    });
+  }
+
+  function renderLetterPool() {
+    letterPool.innerHTML = '';
+    availableLetters.forEach((item, idx) => {
+      const tile = document.createElement('div');
+      tile.className = 'letter-tile';
+      if (item.used) tile.classList.add('disabled');
+      tile.innerText = item.letter;
+      tile.onclick = () => addLetterToSlot(idx);
+      letterPool.appendChild(tile);
+    });
+  }
+
+  // --------------------------------------------------------------
+  //  INTERACTIONS
+  // --------------------------------------------------------------
+  function addLetterToSlot(idx) {
+    if (answered) return;
+    const item = availableLetters[idx];
+    if (item.used) return;
+
+    // check if slot is full (can't exceed word length)
+    if (selectedLetters.length >= currentWordObj.word.length) {
+      feedback.innerText = '⚠️ Word is already complete!';
+      feedback.style.background = '#ffeedb';
+      return;
+    }
+
+    item.used = true;
+    selectedLetters.push(item.letter);
+    renderSpellSlot();
+    renderLetterPool();
+    feedback.innerText = '';
+    feedback.style.background = 'rgba(255,255,255,0.3)';
+  }
+
+  function removeLetterFromSlot(idx) {
+    if (answered) return;
+    const letter = selectedLetters[idx];
+    // find first unused letter in pool that matches (to re-enable)
+    for (let i = 0; i < availableLetters.length; i++) {
+      if (availableLetters[i].used === true && availableLetters[i].letter === letter) {
+        // we need to remove the specific one, but we have to match by position
+        // better: find the last used matching letter (or any)
+        break;
+      }
+    }
+    // simpler: remove from selected, then find a used letter in pool with same char and set used=false
+    selectedLetters.splice(idx, 1);
+    // re-enable a used letter from pool that matches
+    for (let i = 0; i < availableLetters.length; i++) {
+      if (availableLetters[i].used === true && availableLetters[i].letter === letter) {
+        availableLetters[i].used = false;
+        break;
+      }
+    }
+    renderSpellSlot();
+    renderLetterPool();
+    feedback.innerText = '';
+    feedback.style.background = 'rgba(255,255,255,0.3)';
+  }
+
+  function clearWord() {
+    if (answered) return;
+    // reset all used to false
+    availableLetters.forEach(item => item.used = false);
+    selectedLetters = [];
+    renderSpellSlot();
+    renderLetterPool();
+    feedback.innerText = '';
+    feedback.style.background = 'rgba(255,255,255,0.3)';
+  }
+
+  function shuffleLetters() {
+    if (answered) return;
+    // gather unused letters
+    const unused = availableLetters.filter(item => !item.used).map(item => item.letter);
+    const shuffled = shuffleArray(unused);
+    let idx = 0;
+    for (let i = 0; i < availableLetters.length; i++) {
+      if (!availableLetters[i].used) {
+        availableLetters[i].letter = shuffled[idx++];
+      }
+    }
+    renderLetterPool();
+    feedback.innerText = '🔀 Shuffled!';
+    feedback.style.background = '#e6f0fa';
+  }
+
+  // --------------------------------------------------------------
+  //  CHECK
+  // --------------------------------------------------------------
+  function checkWord() {
+    if (answered) return;
+    const word = currentWordObj.word;
+    const built = selectedLetters.join('');
+
+    if (built.length !== word.length) {
+      feedback.innerText = `❗ Need ${word.length} letters (you have ${built.length})`;
+      feedback.style.background = '#ffeedb';
+      return;
+    }
+
+    answered = true;
+    checkBtn.disabled = true;
+    clearBtn.disabled = true;
+    shuffleBtn.disabled = true;
+
+    if (built === word) {
+      // correct
+      score += 10;
+      feedback.innerText = '✅ Perfect! +10 ⭐';
+      feedback.style.background = '#d4edda';
+      speak('Correct! Well done.');
+      // highlight correct
+      document.querySelectorAll('.spell-slot .letter-tile').forEach(el => {
+        el.style.background = '#b8e0b8';
+        el.style.borderColor = '#2b7a2b';
+      });
+    } else {
+      // wrong
+      lives--;
+      feedback.innerText = `😊 Correct spelling: ${word}`;
+      feedback.style.background = '#f8d7da';
+      speak(`The correct spelling is ${word}`);
+      // show correct spelling in slot
+      selectedLetters = word.split('');
+      renderSpellSlot();
+      document.querySelectorAll('.spell-slot .letter-tile').forEach(el => {
+        el.style.background = '#d4c4f0';
+        el.style.borderColor = '#6f4f8a';
+      });
+      // disable all pool
+      availableLetters.forEach(item => item.used = true);
+      renderLetterPool();
+    }
+
+    updateStats();
+    nextBtn.style.display = 'inline-block';
+
+    if (lives <= 0) {
+      setTimeout(finishGame, 1200);
+    }
+  }
+
+  function nextWord() {
+    currentIndex++;
+    loadWord();
+  }
+
+  // --------------------------------------------------------------
+  //  STATS & PROGRESS
+  // --------------------------------------------------------------
+  function updateStats() {
+    scoreDisplay.innerText = score;
+    livesDisplay.innerText = lives;
+    questionCounter.innerText = Math.min(currentIndex + 1, currentWords.length);
+  }
+
+  function updateProgress() {
+    const pct = ((currentIndex) / currentWords.length) * 100;
+    progressBar.style.width = pct + '%';
+  }
+
+  // --------------------------------------------------------------
+  //  FINISH
+  // --------------------------------------------------------------
+  function finishGame() {
+    document.getElementById('gameScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+    document.getElementById('finalScore').innerText = score + ' ⭐';
+    let msg = '';
+    if (score >= 100) msg = '🌟 Amazing! You\'re a word master!';
+    else if (score >= 60) msg = '👏 Great job! Keep it up!';
+    else if (score >= 30) msg = '💪 Good effort! Practice makes perfect.';
+    else msg = '📖 Keep learning, you\'ll get better!';
+    document.getElementById('resultMessage').innerText = msg;
+    // save best
+    saveBestScore(score);
+  }
+
+  // --------------------------------------------------------------
+  //  SPEECH
+  // --------------------------------------------------------------
+  function speak(text) {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(text);
+    msg.lang = 'en-US';
+    msg.rate = 0.8;
+    msg.pitch = 1.0;
+    window.speechSynthesis.speak(msg);
+  }
+
+  // --------------------------------------------------------------
+  //  RESET / NEW GAME
+  // --------------------------------------------------------------
+  function resetGame() {
+    document.getElementById('gameScreen').style.display = 'block';
+    document.getElementById('resultScreen').style.display = 'none';
+    initGame();
+  }
+
+  // --------------------------------------------------------------
+  //  BEST SCORE (localStorage)
+  // --------------------------------------------------------------
+  function saveBestScore(newScore) {
+    const best = parseInt(localStorage.getItem('wordArrangerBest') || '0');
+    if (newScore > best) localStorage.setItem('wordArrangerBest', newScore);
+  }
+
+  // --------------------------------------------------------------
+  //  UTILITY
+  // --------------------------------------------------------------
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+
+  // --------------------------------------------------------------
+  //  START
+  // --------------------------------------------------------------
+  initGame();
+</script>
+
+</body>
+</html>
+```
