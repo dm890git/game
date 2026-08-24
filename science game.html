@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Periodic Table Challenge - Class 10</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    min-height:100vh;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:#222;
+}
+
+header{
+    background:white;
+    text-align:center;
+    padding:18px;
+    box-shadow:0 3px 15px rgba(0,0,0,.3);
+}
+
+header h1{
+    color:#1565c0;
+    font-size:30px;
+}
+
+header p{
+    color:#555;
+    margin-top:5px;
+}
+
+.container{
+    max-width:1050px;
+    margin:auto;
+    padding:20px;
+}
+
+.screen{
+    display:none;
+}
+
+.screen.active{
+    display:block;
+}
+
+.card{
+    background:white;
+    border-radius:22px;
+    padding:25px;
+    margin-top:20px;
+    box-shadow:0 8px 25px rgba(0,0,0,.3);
+}
+
+.menu-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.menu-btn{
+    border:none;
+    border-radius:18px;
+    padding:22px 10px;
+    cursor:pointer;
+    background:#e3f2fd;
+    font-size:18px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.menu-btn:hover{
+    transform:translateY(-5px);
+    background:#bbdefb;
+}
+
+.menu-btn span{
+    display:block;
+    font-size:45px;
+    margin-bottom:8px;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.badge{
+    background:#1565c0;
+    color:white;
+    padding:10px 15px;
+    border-radius:30px;
+    font-weight:bold;
+}
+
+.question{
+    text-align:center;
+    font-size:27px;
+    font-weight:bold;
+    margin:30px 10px;
+}
+
+.element-box{
+    width:180px;
+    height:180px;
+    margin:20px auto;
+    border:5px solid #1565c0;
+    border-radius:20px;
+    text-align:center;
+    padding:15px;
+    background:#e3f2fd;
+}
+
+.element-number{
+    text-align:left;
+    font-size:18px;
+}
+
+.element-symbol{
+    font-size:70px;
+    font-weight:bold;
+    color:#1565c0;
+}
+
+.element-name{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.option{
+    border:3px solid #ddd;
+    background:#fafafa;
+    border-radius:18px;
+    padding:20px;
+    cursor:pointer;
+    font-size:21px;
+    font-weight:bold;
+    transition:.2s;
+}
+
+.option:hover{
+    background:#e3f2fd;
+}
+
+.correct{
+    background:#c8e6c9 !important;
+    border-color:#43a047 !important;
+}
+
+.wrong{
+    background:#ffcdd2 !important;
+    border-color:#e53935 !important;
+}
+
+.feedback{
+    min-height:35px;
+    text-align:center;
+    font-size:21px;
+    font-weight:bold;
+    margin:18px;
+}
+
+.btn{
+    border:none;
+    padding:13px 22px;
+    border-radius:30px;
+    color:white;
+    background:#1565c0;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+    margin:5px;
+}
+
+.btn:hover{
+    opacity:.85;
+}
+
+.home{
+    background:#00897b;
+}
+
+.speak{
+    background:#ef6c00;
+}
+
+.next{
+    background:#2e7d32;
+}
+
+.progress{
+    height:12px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+    margin:20px 0;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#1565c0;
+    transition:.3s;
+}
+
+.result{
+    text-align:center;
+}
+
+.trophy{
+    font-size:80px;
+}
+
+.result h2{
+    font-size:35px;
+    color:#1565c0;
+}
+
+.table-wrapper{
+    overflow-x:auto;
+    margin-top:20px;
+}
+
+.periodic-table{
+    display:grid;
+    grid-template-columns:repeat(18,60px);
+    gap:4px;
+    min-width:1100px;
+}
+
+.element{
+    height:65px;
+    border-radius:7px;
+    padding:4px;
+    text-align:center;
+    cursor:pointer;
+    font-size:11px;
+    transition:.15s;
+}
+
+.element:hover{
+    transform:scale(1.08);
+    z-index:2;
+}
+
+.element strong{
+    display:block;
+    font-size:20px;
+}
+
+.nonmetal{
+    background:#a5d6a7;
+}
+
+.noble{
+    background:#ce93d8;
+}
+
+.alkali{
+    background:#ffcc80;
+}
+
+.alkaline{
+    background:#ffe082;
+}
+
+.transition{
+    background:#90caf9;
+}
+
+.post{
+    background:#b0bec5;
+}
+
+.metalloid{
+    background:#80cbc4;
+}
+
+.halogen{
+    background:#f48fb1;
+}
+
+.lanthanide{
+    background:#bcaaa4;
+}
+
+.actinide{
+    background:#ffab91;
+}
+
+.legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:15px;
+}
+
+.legend span{
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:12px;
+}
+
+@media(max-width:600px){
+
+    header h1{
+        font-size:23px;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+
+    .question{
+        font-size:22px;
+    }
+
+    .element-box{
+        width:150px;
+        height:150px;
+    }
+
+    .element-symbol{
+        font-size:55px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>⚛️ Periodic Table Challenge</h1>
+<p>Class 10 Science • Learn • Think • Challenge Yourself</p>
+
+<p>Developed by Deepak Maurya
+</p>
+</header>
+
+<div class="container">
+
+<!-- HOME -->
+<div id="home" class="screen active">
+
+<div class="card">
+
+<h2 style="text-align:center;">Choose Your Challenge 🧪</h2>
+
+<div class="menu-grid">
+
+<button class="menu-btn" onclick="startQuiz('name')">
+<span>🔬</span>
+Element Identification
+</button>
+
+<button class="menu-btn" onclick="startQuiz('symbol')">
+<span>⚛️</span>
+Symbol Challenge
+</button>
+
+<button class="menu-btn" onclick="startQuiz('atomic')">
+<span>🔢</span>
+Atomic Number
+</button>
+
+<button class="menu-btn" onclick="startQuiz('group')">
+<span>📊</span>
+Group & Period
+</button>
+
+<button class="menu-btn" onclick="startQuiz('property')">
+<span>🧠</span>
+Properties
+</button>
+
+<button class="menu-btn" onclick="startQuiz('mixed')">
+<span>🏆</span>
+Mixed Challenge
+</button>
+
+<button class="menu-btn" onclick="showTable()">
+<span>📋</span>
+Explore Periodic Table
+</button>
+
+</div>
+
+</div>
+
+<div class="card" style="text-align:center">
+
+<h2>🏆 Best Score</h2>
+
+<div style="font-size:40px;margin:10px" id="bestScore">
+0
+</div>
+
+<button class="btn" onclick="resetBest()">
+Reset Best Score
+</button>
+
+</div>
+
+</div>
+
+
+<!-- QUIZ -->
+<div id="quiz" class="screen">
+
+<div class="card">
+
+<div class="topbar">
+
+<span class="badge" id="gameTitle">
+Quiz
+</span>
+
+<span class="badge">
+⭐ <span id="score">0</span>
+</span>
+
+<span class="badge">
+❤️ <span id="lives">3</span>
+</span>
+
+</div>
+
+<div class="progress">
+<div class="progress-bar" id="progress"></div>
+</div>
+
+<div id="question" class="question"></div>
+
+<div id="elementDisplay"></div>
+
+<div style="text-align:center">
+
+<button class="btn speak" onclick="speakQuestion()">
+🔊 Read Question
+</button>
+
+</div>
+
+<div id="options" class="options"></div>
+
+<div id="feedback" class="feedback"></div>
+
+<div style="text-align:center">
+
+<button class="btn next" id="nextBtn"
+onclick="nextQuestion()" style="display:none">
+Next ➜
+</button>
+
+<button class="btn home" onclick="goHome()">
+🏠 Home
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- TABLE -->
+<div id="table" class="screen">
+
+<div class="card">
+
+<div class="topbar">
+
+<h2>📋 Interactive Periodic Table</h2>
+
+<button class="btn home" onclick="goHome()">
+🏠 Home
+</button>
+
+</div>
+
+<p style="margin-top:10px">
+Tap any element to see its basic information.
+</p>
+
+<div class="table-wrapper">
+<div id="periodicTable" class="periodic-table"></div>
+</div>
+
+<div class="legend">
+
+<span class="nonmetal">Non-metal</span>
+<span class="noble">Noble Gas</span>
+<span class="alkali">Alkali Metal</span>
+<span class="alkaline">Alkaline Earth</span>
+<span class="transition">Transition Metal</span>
+<span class="metalloid">Metalloid</span>
+<span class="halogen">Halogen</span>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- RESULT -->
+<div id="result" class="screen">
+
+<div class="card result">
+
+<div class="trophy">
+🏆
+</div>
+
+<h2>Challenge Complete!</h2>
+
+<p style="font-size:24px;margin:15px">
+Your Score
+</p>
+
+<div style="font-size:50px">
+<span id="finalScore">0</span> ⭐
+</div>
+
+<p id="resultMessage"
+style="font-size:20px;margin:20px">
+</p>
+
+<button class="btn" onclick="goHome()">
+🔄 Play Again
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =====================================
+ELEMENT DATABASE
+===================================== */
+
+const elements=[
+
+[1,"H","Hydrogen",1,1,"Non-metal"],
+[2,"He","Helium",18,1,"Noble Gas"],
+[3,"Li","Lithium",1,2,"Alkali Metal"],
+[4,"Be","Beryllium",2,2,"Alkaline Earth"],
+[5,"B","Boron",13,2,"Metalloid"],
+[6,"C","Carbon",14,2,"Non-metal"],
+[7,"N","Nitrogen",15,2,"Non-metal"],
+[8,"O","Oxygen",16,2,"Non-metal"],
+[9,"F","Fluorine",17,2,"Halogen"],
+[10,"Ne","Neon",18,2,"Noble Gas"],
+
+[11,"Na","Sodium",1,3,"Alkali Metal"],
+[12,"Mg","Magnesium",2,3,"Alkaline Earth"],
+[13,"Al","Aluminium",13,3,"Post-transition"],
+[14,"Si","Silicon",14,3,"Metalloid"],
+[15,"P","Phosphorus",15,3,"Non-metal"],
+[16,"S","Sulfur",16,3,"Non-metal"],
+[17,"Cl","Chlorine",17,3,"Halogen"],
+[18,"Ar","Argon",18,3,"Noble Gas"],
+
+[19,"K","Potassium",1,4,"Alkali Metal"],
+[20,"Ca","Calcium",2,4,"Alkaline Earth"],
+[21,"Sc","Scandium",3,4,"Transition Metal"],
+[22,"Ti","Titanium",4,4,"Transition Metal"],
+[23,"V","Vanadium",5,4,"Transition Metal"],
+[24,"Cr","Chromium",6,4,"Transition Metal"],
+[25,"Mn","Manganese",7,4,"Transition Metal"],
+[26,"Fe","Iron",8,4,"Transition Metal"],
+[27,"Co","Cobalt",9,4,"Transition Metal"],
+[28,"Ni","Nickel",10,4,"Transition Metal"],
+[29,"Cu","Copper",11,4,"Transition Metal"],
+[30,"Zn","Zinc",12,4,"Transition Metal"],
+[31,"Ga","Gallium",13,4,"Post-transition"],
+[32,"Ge","Germanium",14,4,"Metalloid"],
+[33,"As","Arsenic",15,4,"Metalloid"],
+[34,"Se","Selenium",16,4,"Non-metal"],
+[35,"Br","Bromine",17,4,"Halogen"],
+[36,"Kr","Krypton",18,4,"Noble Gas"],
+
+[37,"Rb","Rubidium",1,5,"Alkali Metal"],
+[38,"Sr","Strontium",2,5,"Alkaline Earth"],
+[39,"Y","Yttrium",3,5,"Transition Metal"],
+[40,"Zr","Zirconium",4,5,"Transition Metal"],
+[41,"Nb","Niobium",5,5,"Transition Metal"],
+[42,"Mo","Molybdenum",6,5,"Transition Metal"],
+[43,"Tc","Technetium",7,5,"Transition Metal"],
+[44,"Ru","Ruthenium",8,5,"Transition Metal"],
+[45,"Rh","Rhodium",9,5,"Transition Metal"],
+[46,"Pd","Palladium",10,5,"Transition Metal"],
+[47,"Ag","Silver",11,5,"Transition Metal"],
+[48,"Cd","Cadmium",12,5,"Transition Metal"],
+[49,"In","Indium",13,5,"Post-transition"],
+[50,"Sn","Tin",14,5,"Post-transition"],
+[51,"Sb","Antimony",15,5,"Metalloid"],
+[52,"Te","Tellurium",16,5,"Metalloid"],
+[53,"I","Iodine",17,5,"Halogen"],
+[54,"Xe","Xenon",18,5,"Noble Gas"],
+
+[55,"Cs","Caesium",1,6,"Alkali Metal"],
+[56,"Ba","Barium",2,6,"Alkaline Earth"],
+[57,"La","Lanthanum",3,6,"Lanthanide"],
+[58,"Ce","Cerium",4,6,"Lanthanide"],
+[59,"Pr","Praseodymium",5,6,"Lanthanide"],
+[60,"Nd","Neodymium",6,6,"Lanthanide"],
+[61,"Pm","Promethium",7,6,"Lanthanide"],
+[62,"Sm","Samarium",8,6,"Lanthanide"],
+[63,"Eu","Europium",9,6,"Lanthanide"],
+[64,"Gd","Gadolinium",10,6,"Lanthanide"],
+[65,"Tb","Terbium",11,6,"Lanthanide"],
+[66,"Dy","Dysprosium",12,6,"Lanthanide"],
+[67,"Ho","Holmium",13,6,"Lanthanide"],
+[68,"Er","Erbium",14,6,"Lanthanide"],
+[69,"Tm","Thulium",15,6,"Lanthanide"],
+[70,"Yb","Ytterbium",16,6,"Lanthanide"],
+[71,"Lu","Lutetium",17,6,"Lanthanide"],
+[72,"Hf","Hafnium",4,6,"Transition Metal"],
+[73,"Ta","Tantalum",5,6,"Transition Metal"],
+[74,"W","Tungsten",6,6,"Transition Metal"],
+[75,"Re","Rhenium",7,6,"Transition Metal"],
+[76,"Os","Osmium",8,6,"Transition Metal"],
+[77,"Ir","Iridium",9,6,"Transition Metal"],
+[78,"Pt","Platinum",10,6,"Transition Metal"],
+[79,"Au","Gold",11,6,"Transition Metal"],
+[80,"Hg","Mercury",12,6,"Transition Metal"],
+[81,"Tl","Thallium",13,6,"Post-transition"],
+[82,"Pb","Lead",14,6,"Post-transition"],
+[83,"Bi","Bismuth",15,6,"Post-transition"],
+[84,"Po","Polonium",16,6,"Post-transition"],
+[85,"At","Astatine",17,6,"Halogen"],
+[86,"Rn","Radon",18,6,"Noble Gas"],
+
+[87,"Fr","Francium",1,7,"Alkali Metal"],
+[88,"Ra","Radium",2,7,"Alkaline Earth"],
+[89,"Ac","Actinium",3,7,"Actinide"],
+[90,"Th","Thorium",4,7,"Actinide"],
+[91,"Pa","Protactinium",5,7,"Actinide"],
+[92,"U","Uranium",6,7,"Actinide"],
+[93,"Np","Neptunium",7,7,"Actinide"],
+[94,"Pu","Plutonium",8,7,"Actinide"],
+[95,"Am","Americium",9,7,"Actinide"],
+[96,"Cm","Curium",10,7,"Actinide"],
+[97,"Bk","Berkelium",11,7,"Actinide"],
+[98,"Cf","Californium",12,7,"Actinide"],
+[99,"Es","Einsteinium",13,7,"Actinide"],
+[100,"Fm","Fermium",14,7,"Actinide"],
+[101,"Md","Mendelevium",15,7,"Actinide"],
+[102,"No","Nobelium",16,7,"Actinide"],
+[103,"Lr","Lawrencium",17,7,"Actinide"],
+[104,"Rf","Rutherfordium",4,7,"Transition Metal"],
+[105,"Db","Dubnium",5,7,"Transition Metal"],
+[106,"Sg","Seaborgium",6,7,"Transition Metal"],
+[107,"Bh","Bohrium",7,7,"Transition Metal"],
+[108,"Hs","Hassium",8,7,"Transition Metal"],
+[109,"Mt","Meitnerium",9,7,"Transition Metal"],
+[110,"Ds","Darmstadtium",10,7,"Transition Metal"],
+[111,"Rg","Roentgenium",11,7,"Transition Metal"],
+[112,"Cn","Copernicium",12,7,"Transition Metal"],
+[113,"Nh","Nihonium",13,7,"Post-transition"],
+[114,"Fl","Flerovium",14,7,"Post-transition"],
+[115,"Mc","Moscovium",15,7,"Post-transition"],
+[116,"Lv","Livermorium",16,7,"Post-transition"],
+[117,"Ts","Tennessine",17,7,"Halogen"],
+[118,"Og","Oganesson",18,7,"Noble Gas"]
+
+];
+
+
+/* =====================================
+VARIABLES
+===================================== */
+
+let gameType="";
+let questions=[];
+let current=0;
+let score=0;
+let lives=3;
+let answered=false;
+
+
+/* =====================================
+SCREEN
+===================================== */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen")
+.forEach(x=>x.classList.remove("active"));
+
+document.getElementById(id)
+.classList.add("active");
+
+window.scrollTo(0,0);
+
+}
+
+
+function goHome(){
+
+showScreen("home");
+
+updateBest();
+
+}
+
+
+/* =====================================
+QUIZ
+===================================== */
+
+function startQuiz(type){
+
+gameType=type;
+
+score=0;
+lives=3;
+current=0;
+
+questions=[];
+
+for(let i=0;i<10;i++){
+
+questions.push(
+elements[
+Math.floor(Math.random()*elements.length)
+]);
+
+}
+
+document.getElementById("gameTitle")
+.innerText=getGameTitle(type);
+
+showScreen("quiz");
+
+loadQuestion();
+
+}
+
+
+function getGameTitle(type){
+
+const titles={
+name:"🔬 Element Identification",
+symbol:"⚛️ Symbol Challenge",
+atomic:"🔢 Atomic Number",
+group:"📊 Group & Period",
+property:"🧠 Properties",
+mixed:"🏆 Mixed Challenge"
+};
+
+return titles[type];
+
+}
+
+
+/* =====================================
+LOAD QUESTION
+===================================== */
+
+function loadQuestion(){
+
+if(current>=questions.length){
+
+finish();
+
+return;
+
+}
+
+answered=false;
+
+document.getElementById("feedback")
+.innerText="";
+
+document.getElementById("nextBtn")
+.style.display="none";
+
+document.getElementById("score")
+.innerText=score;
+
+document.getElementById("lives")
+.innerText=lives;
+
+document.getElementById("progress")
+.style.width=
+((current/questions.length)*100)+"%";
+
+let e=questions[current];
+
+let question="";
+
+let display="";
+
+
+if(gameType==="name"){
+
+question="What is the name of this element?";
+
+display=elementCard(e);
+
+}
+
+
+else if(gameType==="symbol"){
+
+question=
+"What is the chemical symbol of "+e[2]+"?";
+
+}
+
+
+else if(gameType==="atomic"){
+
+question=
+"What is the atomic number of "+e[2]+"?";
+
+}
+
+
+else if(gameType==="group"){
+
+question=
+"Which group does "+e[2]+" belong to?";
+
+}
+
+
+else if(gameType==="property"){
+
+question=
+"What type of element is "+e[2]+"?";
+
+}
+
+
+else{
+
+let types=[
+"name",
+"symbol",
+"atomic",
+"group",
+"property"
+];
+
+let randomType=
+types[Math.floor(Math.random()*types.length)];
+
+gameType=randomType;
+
+loadQuestion();
+
+return;
+
+}
+
+
+document.getElementById("question")
+.innerText=question;
+
+document.getElementById("elementDisplay")
+.innerHTML=display;
+
+createOptions(e);
+
+}
+
+
+/* =====================================
+ELEMENT CARD
+===================================== */
+
+function elementCard(e){
+
+return `
+<div class="element-box">
+
+<div class="element-number">
+Atomic No. ${e[0]}
+</div>
+
+<div class="element-symbol">
+${e[1]}
+</div>
+
+<div class="element-name">
+${e[2]}
+</div>
+
+</div>
+`;
+
+}
+
+
+/* =====================================
+OPTIONS
+===================================== */
+
+function createOptions(correct){
+
+let values=[];
+
+let index;
+
+
+if(gameType==="name"){
+
+index=2;
+
+}
+
+else if(gameType==="symbol"){
+
+index=1;
+
+}
+
+else if(gameType==="atomic"){
+
+index=0;
+
+}
+
+else if(gameType==="group"){
+
+let groups=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+
+values=[correct[3]];
+
+while(values.length<4){
+
+let x=groups[Math.floor(Math.random()*groups.length)];
+
+if(!values.includes(x))
+values.push(x);
+
+}
+
+}
+
+else if(gameType==="property"){
+
+let props=[
+"Non-metal",
+"Noble Gas",
+"Alkali Metal",
+"Alkaline Earth",
+"Transition Metal",
+"Metalloid",
+"Halogen",
+"Post-transition",
+"Lanthanide",
+"Actinide"
+];
+
+values=[correct[5]];
+
+while(values.length<4){
+
+let x=props[Math.floor(Math.random()*props.length)];
+
+if(!values.includes(x))
+values.push(x);
+
+}
+
+}
+
+
+if(index!==undefined){
+
+values=[correct[index]];
+
+while(values.length<4){
+
+let random=
+elements[Math.floor(Math.random()*elements.length)][index];
+
+if(!values.includes(random))
+values.push(random);
+
+}
+
+}
+
+
+values.sort(()=>Math.random()-.5);
+
+let container=document.getElementById("options");
+
+container.innerHTML="";
+
+
+values.forEach(value=>{
+
+let btn=document.createElement("button");
+
+btn.className="option";
+
+btn.innerText=value;
+
+btn.onclick=()=>{
+checkAnswer(btn,value,correct)
+};
+
+container.appendChild(btn);
+
+});
+
+}
+
+
+/* =====================================
+CHECK ANSWER
+===================================== */
+
+function checkAnswer(btn,selected,correct){
+
+if(answered)
+return;
+
+answered=true;
+
+let correctAnswer;
+
+
+if(gameType==="name")
+correctAnswer=correct[2];
+
+else if(gameType==="symbol")
+correctAnswer=correct[1];
+
+else if(gameType==="atomic")
+correctAnswer=correct[0];
+
+else if(gameType==="group")
+correctAnswer=correct[3];
+
+else if(gameType==="property")
+correctAnswer=correct[5];
+
+
+if(String(selected)===String(correctAnswer)){
+
+btn.classList.add("correct");
+
+score+=10;
+
+document.getElementById("feedback")
+.innerText="🎉 Correct! Excellent! +10";
+
+speak("Correct! Excellent!");
+
+}
+
+else{
+
+btn.classList.add("wrong");
+
+lives--;
+
+document.getElementById("feedback")
+.innerText=
+"❌ Correct answer: "+correctAnswer;
+
+speak("The correct answer is "+correctAnswer);
+
+document.querySelectorAll(".option")
+.forEach(x=>{
+
+if(x.innerText==correctAnswer)
+x.classList.add("correct");
+
+});
+
+}
+
+
+document.getElementById("score")
+.innerText=score;
+
+document.getElementById("lives")
+.innerText=lives;
+
+document.getElementById("nextBtn")
+.style.display="inline-block";
+
+
+if(lives<=0){
+
+setTimeout(finish,1200);
+
+}
+
+}
+
+
+/* =====================================
+NEXT
+===================================== */
+
+function nextQuestion(){
+
+current++;
+
+loadQuestion();
+
+}
+
+
+/* =====================================
+SPEECH
+===================================== */
+
+function speak(text){
+
+if(!("speechSynthesis" in window))
+return;
+
+speechSynthesis.cancel();
+
+let msg=
+new SpeechSynthesisUtterance(text);
+
+msg.lang="en-US";
+msg.rate=.85;
+
+speechSynthesis.speak(msg);
+
+}
+
+
+function speakQuestion(){
+
+let text=
+document.getElementById("question").innerText;
+
+speak(text);
+
+}
+
+
+/* =====================================
+RESULT
+===================================== */
+
+function finish(){
+
+saveBest(score);
+
+document.getElementById("finalScore")
+.innerText=score;
+
+let message;
+
+if(score>=90)
+message="🌟 Outstanding! You are a Periodic Table Master!";
+
+else if(score>=70)
+message="🔥 Excellent! Your chemistry knowledge is strong!";
+
+else if(score>=50)
+message="👏 Good work! Keep practising!";
+
+else
+message="💪 Keep learning. You will improve!";
+
+document.getElementById("resultMessage")
+.innerText=message;
+
+showScreen("result");
+
+}
+
+
+/* =====================================
+PERIODIC TABLE
+===================================== */
+
+function showTable(){
+
+showScreen("table");
+
+createTable();
+
+}
+
+
+function createTable(){
+
+let table=
+document.getElementById("periodicTable");
+
+table.innerHTML="";
+
+elements.forEach(e=>{
+
+let box=document.createElement("div");
+
+box.className=
+"element "+getClass(e[5]);
+
+box.style.gridColumn=e[3];
+
+box.style.gridRow=e[4];
+
+box.innerHTML=
+`
+<small>${e[0]}</small>
+<strong>${e[1]}</strong>
+${e[2]}
+`;
+
+box.onclick=()=>{
+
+alert(
+e[2]+
+"\nSymbol: "+e[1]+
+"\nAtomic Number: "+e[0]+
+"\nGroup: "+e[3]+
+"\nPeriod: "+e[4]+
+"\nType: "+e[5]
+);
+
+};
+
+table.appendChild(box);
+
+});
+
+}
+
+
+function getClass(type){
+
+const map={
+
+"Non-metal":"nonmetal",
+"Noble Gas":"noble",
+"Alkali Metal":"alkali",
+"Alkaline Earth":"alkaline",
+"Transition Metal":"transition",
+"Post-transition":"post",
+"Metalloid":"metalloid",
+"Halogen":"halogen",
+"Lanthanide":"lanthanide",
+"Actinide":"actinide"
+
+};
+
+return map[type]||"post";
+
+}
+
+
+/* =====================================
+BEST SCORE
+===================================== */
+
+function saveBest(score){
+
+let best=
+parseInt(
+localStorage.getItem("periodicBest")||"0"
+);
+
+if(score>best){
+
+localStorage.setItem(
+"periodicBest",
+score
+);
+
+}
+
+}
+
+
+function updateBest(){
+
+let best=
+localStorage.getItem("periodicBest")||0;
+
+document.getElementById("bestScore")
+.innerText=best+" ⭐";
+
+}
+
+
+function resetBest(){
+
+localStorage.removeItem("periodicBest");
+
+updateBest();
+
+alert("Best score reset!");
+
+}
+
+
+updateBest();
+
+</script>
+
+</body>
+</html>
