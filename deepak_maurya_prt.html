@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>वर्णमाला की खोज (Hindi Varnmala Letter Hunt)</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f7ff;
+      margin: 0;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    h1 {
+      color: #2c3e50;
+      margin: 5px 0 10px 0;
+      text-align: center;
+      font-size: 1.4rem;
+    }
+    /* Fully responsive letter picker grid optimized for mobile screens */
+    .varnmala-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 5px;
+      max-width: 600px;
+      width: 100%;
+      background: #ffffff;
+      border: 2.5px solid #90caf9;
+      border-radius: 12px;
+      padding: 8px;
+      margin-bottom: 12px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.05);
+    }
+    .btn-letter {
+      background: #f5f5f5;
+      border: 1.5px solid #ddd;
+      height: 38px;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #424242;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+    }
+    .btn-letter:active {
+      transform: scale(0.92);
+    }
+    .btn-letter.active {
+      background: #2196f3;
+      color: white;
+      border-color: #1565c0;
+      transform: scale(1.05);
+      box-shadow: 0 2px 5px rgba(33, 150, 243, 0.4);
+    }
+    .instruction {
+      font-size: 0.95rem;
+      color: #333;
+      margin-bottom: 12px;
+      background: #e1f5fe;
+      border: 2px solid #b3e5fc;
+      padding: 6px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+    .target-badge {
+      display: inline-block;
+      background: #ff9800;
+      color: white;
+      padding: 1px 8px;
+      border-radius: 8px;
+      font-size: 1.15rem;
+    }
+    /* Fully responsive game room grid (2 columns on mobile, 3 columns on tablet/desktop) */
+    .room-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      width: 100%;
+      max-width: 600px;
+      background: #ffffff;
+      border: 3px solid #90caf9;
+      border-radius: 16px;
+      padding: 15px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+    }
+    .item-card {
+      background: #fafafa;
+      border: 2.5px solid #e0e0e0;
+      border-radius: 14px;
+      padding: 14px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s, background-color 0.15s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+    }
+    .item-card:active {
+      transform: scale(0.96);
+    }
+    .item-card.correct {
+      border-color: #4caf50;
+      background-color: #e8f5e9;
+      cursor: default;
+    }
+    .item-card.wrong {
+      animation: shake 0.4s;
+      border-color: #f44336;
+      background-color: #ffebee;
+    }
+    .item-icon {
+      font-size: 3.8rem;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .item-label {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #424242;
+    }
+    .status-bar {
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      color: #2e7d32;
+      min-height: 25px;
+      text-align: center;
+      padding: 0 10px;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+    #completion-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      padding: 20px;
+    }
+    .modal-content {
+      background: white;
+      padding: 25px 20px;
+      border-radius: 18px;
+      text-align: center;
+      max-width: 340px;
+      width: 100%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-content h2 {
+      margin-top: 0;
+      color: #2e7d32;
+    }
+    .btn-restart {
+      background: #4caf50;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+    }
+
+    /* Media query adjustments for wider tablets and desktop screens */
+    @media (min-width: 650px) {
+      .varnmala-grid {
+        grid-template-columns: repeat(12, 1fr);
+        max-width: 800px;
+      }
+      .room-container {
+        grid-template-columns: repeat(3, 1fr);
+        max-width: 800px;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+      .instruction {
+        font-size: 1.1rem;
+        max-width: 800px;
+      }
+      .item-icon {
+        font-size: 4.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>वर्णमाला का खेल: अक्षर की खोज</h1>
+  
+  <div class="varnmala-grid" id="varnmala-grid">
+    <!-- Dynamically populated via JS -->
+  </div>
+
+  <div class="instruction">
+    '<span class="target-badge" id="target-letter">अ</span>' ध्वनि से शुरू होने वाली चीज़ पर क्लिक कीजिए!
+  </div>
+
+  <div class="room-container" id="room-container">
+    <!-- Items dynamically populated -->
+  </div>
+
+  <div class="status-bar" id="status-text"></div>
+
+  <!-- Win Modal -->
+  <div id="completion-modal">
+    <div class="modal-content">
+      <h2>🎉 शाबाश!</h2>
+      <p id="modal-text">आपने सही शब्दों को पहचान लिया!</p>
+      <button class="btn-restart" onclick="loadLevel(currentTargetLetter)">फिर से खेलें</button>
+    </div>
+  </div>
+
+  <script>
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    // Upbeat musical chord progression for correct answers (Arcade style success jingle)
+    function playCorrectSound() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, index) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now + index * 0.08);
+          
+          gain.gain.setValueAtTime(0.25, now + index * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.35);
+          
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          
+          osc.start(now + index * 0.08);
+          osc.stop(now + index * 0.08 + 0.35);
+        });
+      } catch (e) {
+        console.log("Audio play error:", e);
+      }
+    }
+
+    // Soft, friendly bounce-back sound for incorrect answers
+    function playWrongSound() {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(140, now + 0.2);
+        
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+        
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.25);
+      } catch (e) {
+        console.log("Audio play error:", e);
+      }
+    }
+
+    const fullVarnmalaData = {
+      "अ": { target: [{word: "अनार", icon: "🍎"}, {word: "अखरोट", icon: "🥜"}], distractors: [{word: "आम", icon: "🥭"}, {word: "इमली", icon: "🍯"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "आ": { target: [{word: "आम", icon: "🥭"}, {word: "आग", icon: "🔥"}], distractors: [{word: "अनार", icon: "🍎"}, {word: "इमली", icon: "🍯"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "इ": { target: [{word: "इमली", icon: "🍯"}, {word: "इस्त्री", icon: "🔌"}], distractors: [{word: "ईख", icon: "🎋"}, {word: "अनार", icon: "🍎"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "ई": { target: [{word: "ईख", icon: "🎋"}, {word: "ईंट", icon: "🧱"}], distractors: [{word: "इमली", icon: "🍯"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "उ": { target: [{word: "उल्लू", icon: "🦉"}, {word: "उपहार", icon: "🎁"}], distractors: [{word: "ऊन", icon: "🧶"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "ऊ": { target: [{word: "ऊन", icon: "🧶"}, {word: "ऊंट", icon: "🐪"}], distractors: [{word: "उल्लू", icon: "🦉"}, {word: "इमली", icon: "🍯"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "ऋ": { target: [{word: "ऋषि", icon: "🧘‍♂️"}], distractors: [{word: "अनार", icon: "🍎"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}, {word: "घर", icon: "🏠"}] },
+      "ए": { target: [{word: "एड़ी", icon: "🦶"}, {word: "एक", icon: "1️⃣"}], distractors: [{word: "ऐनक", icon: "👓"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "ऐ": { target: [{word: "ऐनक", icon: "👓"}, {word: "ऐरावत", icon: "🐘"}], distractors: [{word: "एड़ी", icon: "🦶"}, {word: "इमली", icon: "🍯"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "ओ": { target: [{word: "ओखली", icon: "🥣"}, {word: "ओस", icon: "💧"}], distractors: [{word: "औरत", icon: "👩"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "औ": { target: [{word: "औरत", icon: "👩"}, {word: "औजार", icon: "🔧"}], distractors: [{word: "ओखली", icon: "🥣"}, {word: "अनार", icon: "🍎"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "अं": { target: [{word: "अंगूर", icon: "🍇"}, {word: "अंडा", icon: "🥚"}], distractors: [{word: "आम", icon: "🥭"}, {word: "इमली", icon: "🍯"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}] },
+      "अः": { target: [{word: "नमः", icon: "🙏"}], distractors: [{word: "अनार", icon: "🍎"}, {word: "आम", icon: "🥭"}, {word: "कमल", icon: "🌸"}, {word: "नल", icon: "🚰"}, {word: "घर", icon: "🏠"}] },
+
+      "क": { target: [{word: "कमल", icon: "🌸"}, {word: "कलम", icon: "✒️"}, {word: "कबूतर", icon: "🕊️"}], distractors: [{word: "गमला", icon: "🏺"}, {word: "चम्मच", icon: "🥄"}, {word: "घर", icon: "🏠"}] },
+      "ख": { target: [{word: "खरगोश", icon: "🐇"}, {word: "खत", icon: "✉️"}, {word: "खजूर", icon: "🌴"}], distractors: [{word: "कमल", icon: "🌸"}, {word: "गमला", icon: "🏺"}, {word: "घर", icon: "🏠"}] },
+      "ग": { target: [{word: "गमला", icon: "🏺"}, {word: "गाय", icon: "🐄"}, {word: "गिटार", icon: "🎸"}], distractors: [{word: "कमल", icon: "🌸"}, {word: "घर", icon: "🏠"}, {word: "नल", icon: "🚰"}] },
+      "घ": { target: [{word: "घर", icon: "🏠"}, {word: "घड़ी", icon: "⏰"}, {word: "घड़ा", icon: "🏺"}], distractors: [{word: "गमला", icon: "🏺"}, {word: "चम्मच", icon: "🥄"}, {word: "नल", icon: "🚰"}] },
+      "ङ": { target: [{word: "ङ", icon: "🔤"}], distractors: [{word: "कमल", icon: "🌸"}, {word: "घर", icon: "🏠"}, {word: "नल", icon: "🚰"}, {word: "आम", icon: "🥭"}, {word: "अनार", icon: "🍎"}] },
+
+      "च": { target: [{word: "चम्मच", icon: "🥄"}, {word: "चरखा", icon: "🧵"}, {word: "चाबी", icon: "🔑"}], distractors: [{word: "छाता", icon: "☂️"}, {word: "जहाज", icon: "🚢"}, {word: "घर", icon: "🏠"}] },
+      "छ": { target: [{word: "छाता", icon: "☂️"}, {word: "छतरी", icon: "⛱️"}, {word: "छुरी", icon: "🔪"}], distractors: [{word: "चम्मच", icon: "🥄"}, {word: "जहाज", icon: "🚢"}, {word: "घर", icon: "🏠"}] },
+      "ज": { target: [{word: "जहाज", icon: "🚢"}, {word: "जग", icon: "🥛"}, {word: "जूता", icon: "👞"}], distractors: [{word: "झंडा", icon: "🇮🇳"}, {word: "चम्मच", icon: "🥄"}, {word: "घर", icon: "🏠"}] },
+      "झ": { target: [{word: "झंडा", icon: "🇮🇳"}, {word: "झूला", icon: "🛝"}, {word: "झरना", icon: "🌊"}], distractors: [{word: "जहाज", icon: "🚢"}, {word: "छाता", icon: "☂️"}, {word: "घर", icon: "🏠"}] },
+      "ञ": { target: [{word: "ञ", icon: "🔤"}], distractors: [{word: "जहाज", icon: "🚢"}, {word: "चम्मच", icon: "🥄"}, {word: "घर", icon: "🏠"}, {word: "आम", icon: "🥭"}, {word: "अनार", icon: "🍎"}] },
+
+      "ट": { target: [{word: "टमाटर", icon: "🍅"}, {word: "टंकी", icon: "🛢️"}, {word: "टोकरी", icon: "🧺"}], distractors: [{word: "ठठेरा", icon: "👨‍🔧"}, {word: "डमरू", icon: "🪘"}, {word: "घर", icon: "🏠"}] },
+      "ठ": { target: [{word: "ठठेरा", icon: "👨‍🔧"}, {word: "ठप्पा", icon: "🏷️"}, {word: "ठंडा", icon: "🧊"}], distractors: [{word: "टमाटर", icon: "🍅"}, {word: "डमरू", icon: "🪘"}, {word: "घर", icon: "🏠"}] },
+      "ड": { target: [{word: "डमरू", icon: "🪘"}, {word: "डाकिया", icon: "📬"}, {word: "डंडा", icon: "🏏"}], distractors: [{word: "टमाटर", icon: "🍅"}, {word: "ढोलक", icon: "🪘"}, {word: "घर", icon: "🏠"}] },
+      "ढ": { target: [{word: "ढोलक", icon: "🪘"}, {word: "ढक्कन", icon: "🥏"}, {word: "ढाल", icon: "🛡️"}], distractors: [{word: "डमरू", icon: "🪘"}, {word: "टमाटर", icon: "🍅"}, {word: "घर", icon: "🏠"}] },
+      "ण": { target: [{word: "फेण", icon: "🌊"}], distractors: [{word: "टमाटर", icon: "🍅"}, {word: "डमरू", icon: "🪘"}, {word: "घर", icon: "🏠"}, {word: "आम", icon: "🥭"}, {word: "अनार", icon: "🍎"}] },
+
+      "त": { target: [{word: "तरबूज", icon: "🍉"}, {word: "तारा", icon: "⭐"}, {word: "तलवार", icon: "🗡️"}], distractors: [{word: "थर्मस", icon: "🧴"}, {word: "दवा", icon: "💊"}, {word: "घर", icon: "🏠"}] },
+      "थ": { target: [{word: "थर्मस", icon: "🧴"}, {word: "थाली", icon: "🍽️"}, {word: "थैला", icon: "🛍️"}], distractors: [{word: "तरबूज", icon: "🍉"}, {word: "दवा", icon: "💊"}, {word: "घर", icon: "🏠"}] },
+      "द": { target: [{word: "दरवाज़ा", icon: "🚪"}, {word: "दस", icon: "🎲"}, {word: "दादी", icon: "👵"}], distractors: [{word: "धनुष", icon: "🏹"}, {word: "नल", icon: "🚰"}, {word: "घर", icon: "🏠"}] },
+      "ध": { target: [{word: "धनुष", icon: "🏹"}, {word: "धोबी", icon: "👕"}, {word: "धूप", icon: "☀️"}], distractors: [{word: "दरवाज़ा", icon: "🚪"}, {word: "नल", icon: "🚰"}, {word: "घर", icon: "🏠"}] },
+      "न": { target: [{word: "नल", icon: "🚰"}, {word: "नदी", icon: "🏞️"}, {word: "नीम", icon: "🍃"}], distractors: [{word: "तरबूज", icon: "🍉"}, {word: "दरवाज़ा", icon: "🚪"}, {word: "घर", icon: "🏠"}] },
+
+      "प": { target: [{word: "पतंग", icon: "🪁"}, {word: "पत्ता", icon: "🍂"}, {word: "पपीता", icon: "🍈"}], distractors: [{word: "फल", icon: "🍎"}, {word: "बकरी", icon: "🐐"}, {word: "घर", icon: "🏠"}] },
+      "फ": { target: [{word: "फल", icon: "🍎"}, {word: "फूल", icon: "🌻"}, {word: "फावड़ा", icon: "⛏️"}], distractors: [{word: "पतंग", icon: "🪁"}, {word: "बकरी", icon: "🐐"}, {word: "घर", icon: "🏠"}] },
+      "ब": { target: [{word: "बकरी", icon: "🐐"}, {word: "बत्तख", icon: "🦆"}, {word: "बर्तन", icon: "🍲"}], distractors: [{word: "भालू", icon: "🐻"}, {word: "पतंग", icon: "🪁"}, {word: "घर", icon: "🏠"}] },
+      "भ": { target: [{word: "भालू", icon: "🐻"}, {word: "भवन", icon: "🏢"}, {word: "भेड़", icon: "🐑"}], distractors: [{word: "बकरी", icon: "🐐"}, {word: "मछली", icon: "🐟"}, {word: "घर", icon: "🏠"}] },
+      "म": { target: [{word: "मछली", icon: "🐟"}, {word: "मकान", icon: "🏠"}, {word: "माला", icon: "📿"}], distractors: [{word: "बकरी", icon: "🐐"}, {word: "नल", icon: "🚰"}, {word: "तरबूज", icon: "🍉"}] },
+
+      "य": { target: [{word: "यज्ञ", icon: "🔥"}, {word: "यान", icon: "🚀"}, {word: "यात्री", icon: "🚶‍♂️"}], distractors: [{word: "रथ", icon: "🛒"}, {word: "लट्टू", icon: "🪀"}, {word: "घर", icon: "🏠"}] },
+      "र": { target: [{word: "रथ", icon: "🛒"}, {word: "रस्सी", icon: "🪢"}, {word: "रोज़", icon: "🌹"}], distractors: [{word: "यज्ञ", icon: "🔥"}, {word: "लट्टू", icon: "🪀"}, {word: "घर", icon: "🏠"}] },
+      "ल": { target: [{word: "लट्टू", icon: "🪀"}, {word: "लड़की", icon: "👧"}, {word: "लोमड़ी", icon: "🦊"}], distractors: [{word: "रथ", icon: "🛒"}, {word: "वकील", icon: "⚖️"}, {word: "घर", icon: "🏠"}] },
+      "व": { target: [{word: "वकील", icon: "⚖️"}, {word: "वस्त्र", icon: "👕"}, {word: "वृक्ष", icon: "🌳"}], distractors: [{word: "लट्टू", icon: "🪀"}, {word: "शलगम", icon: "🟣"}, {word: "घर", icon: "🏠"}] },
+
+      "श": { target: [{word: "शलगम", icon: "🟣"}, {word: "शेर", icon: "🦁"}, {word: "शंख", icon: "🐚"}], distractors: [{word: "षटकोण", icon: "🛑"}, {word: "सड़क", icon: "🛣️"}, {word: "घर", icon: "🏠"}] },
+      "ष": { target: [{word: "षटकोण", icon: "🛑"}], distractors: [{word: "शलगम", icon: "🟣"}, {word: "सड़क", icon: "🛣️"}, {word: "घर", icon: "🏠"}, {word: "आम", icon: "🥭"}, {word: "अनार", icon: "🍎"}] },
+      "स": { target: [{word: "सड़क", icon: "🛣️"}, {word: "सेब", icon: "🍎"}, {word: "सूरज", icon: "☀️"}], distractors: [{word: "शलगम", icon: "🟣"}, {word: "हाथी", icon: "🐘"}, {word: "घर", icon: "🏠"}] },
+      "ह": { target: [{word: "हाथी", icon: "🐘"}, {word: "हथौड़ा", icon: "🔨"}, {word: "हंस", icon: "🦢"}], distractors: [{word: "सड़क", icon: "🛣️"}, {word: "क्षत्रिय", icon: "🤺"}, {word: "घर", icon: "🏠"}] },
+
+      "क्ष": { target: [{word: "क्षत्रिय", icon: "🤺"}, {word: "क्षमा", icon: "🤝"}], distractors: [{word: "त्रिशूल", icon: "🔱"}, {word: "ज्ञानी", icon: "🧙‍♂️"}, {word: "घर", icon: "🏠"}] },
+      "त्र": { target: [{word: "त्रिशूल", icon: "🔱"}, {word: "त्रिभुज", icon: "🔺"}], distractors: [{word: "क्षत्रिय", icon: "🤺"}, {word: "ज्ञानी", icon: "🧙‍♂️"}, {word: "घर", icon: "🏠"}] },
+      "ज्ञ": { target: [{word: "ज्ञानी", icon: "🧙‍♂️"}], distractors: [{word: "त्रिशूल", icon: "🔱"}, {word: "श्रमिक", icon: "👷‍♂️"}, {word: "घर", icon: "🏠"}, {word: "आम", icon: "🥭"}, {word: "अनार", icon: "🍎"}] },
+      "श्र": { target: [{word: "श्रमिक", icon: "👷‍♂️"}, {word: "श्रद्धा", icon: "🙏"}], distractors: [{word: "ज्ञानी", icon: "🧙‍♂️"}, {word: "त्रिशूल", icon: "🔱"}, {word: "घर", icon: "🏠"}] }
+    };
+
+    const allLetters = Object.keys(fullVarnmalaData);
+    let currentTargetLetter = "अ";
+    let correctFound = 0;
+    let totalCorrect = 0;
+
+    const targetLetterSpan = document.getElementById('target-letter');
+    const roomContainer = document.getElementById('room-container');
+    const statusText = document.getElementById('status-text');
+    const modal = document.getElementById('completion-modal');
+    const modalText = document.getElementById('modal-text');
+    const varnmalaGrid = document.getElementById('varnmala-grid');
+
+    function initGrid() {
+      varnmalaGrid.innerHTML = '';
+      allLetters.forEach(letter => {
+        const btn = document.createElement('button');
+        btn.className = `btn-letter ${letter === currentTargetLetter ? 'active' : ''}`;
+        btn.innerText = letter;
+        btn.setAttribute('data-letter', letter);
+        btn.addEventListener('click', () => loadLevel(letter));
+        varnmalaGrid.appendChild(btn);
+      });
+    }
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'hi-IN';
+        window.speechSynthesis.speak(msg);
+      }
+    }
+
+    function loadLevel(letter) {
+      currentTargetLetter = letter;
+      correctFound = 0;
+      modal.style.display = 'none';
+      statusText.innerText = '';
+      targetLetterSpan.innerText = letter;
+
+      document.querySelectorAll('.btn-letter').forEach(btn => {
+        if (btn.getAttribute('data-letter') === letter) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+
+      const data = fullVarnmalaData[letter] || { target: [{word: letter, icon: "🔤"}], distractors: [{word: "कमल", icon: "🌸"}] };
+      
+      let cardsList = [];
+      data.target.forEach(item => {
+        cardsList.push({ letter: letter, word: item.word, icon: item.icon, audio: `${letter}... से ${item.word}!` });
+      });
+      totalCorrect = cardsList.length;
+
+      let distractorPool = [...data.distractors];
+      distractorPool.sort(() => Math.random() - 0.5);
+      
+      while (cardsList.length < 6 && distractorPool.length > 0) {
+        let d = distractorPool.pop();
+        cardsList.push({ letter: "other", word: d.word, icon: d.icon, audio: `यह शब्द दूसरे अक्षर से शुरू होता है!` });
+      }
+
+      cardsList.sort(() => Math.random() - 0.5);
+
+      roomContainer.innerHTML = '';
+      cardsList.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.setAttribute('data-letter', item.letter);
+        card.setAttribute('data-word', item.word);
+        card.setAttribute('data-audio', item.audio);
+
+        card.innerHTML = `
+          <div class="item-icon">${item.icon}</div>
+          <div class="item-label">${item.word}</div>
+        `;
+
+        card.addEventListener('click', () => handleCardClick(card));
+        roomContainer.appendChild(card);
+      });
+
+      speak(`'${letter}' ध्वनि से शुरू होने वाली चीज़ों को खोजिए!`);
+    }
+
+    function handleCardClick(card) {
+      if (card.classList.contains('correct')) return;
+
+      const cardLetter = card.getAttribute('data-letter');
+      const audioText = card.getAttribute('data-audio');
+
+      if (cardLetter === currentTargetLetter) {
+        card.classList.remove('wrong');
+        card.classList.add('correct');
+        statusText.innerText = audioText;
+        
+        playCorrectSound();
+        speak(audioText);
+        
+        correctFound++;
+        if (correctFound === totalCorrect) {
+          setTimeout(() => {
+            modalText.innerText = `आपने '${currentTargetLetter}' ध्वनि वाले सभी शब्दों को पहचान लिया!`;
+            modal.style.display = 'flex';
+            speak("शानदार! आपने सही शब्द ढूँढ़ लिए!");
+          }, 1500);
+        }
+      } else {
+        card.classList.add('wrong');
+        setTimeout(() => card.classList.remove('wrong'), 400);
+        const retryMsg = "फिर से कोशिश कीजिए! यह शब्द दूसरे अक्षर से शुरू होता है।";
+        statusText.innerText = retryMsg;
+        
+        playWrongSound();
+        speak(retryMsg);
+      }
+    }
+
+    initGrid();
+    loadLevel("अ");
+  </script>
+</body>
+</html>
