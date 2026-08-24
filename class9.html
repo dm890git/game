@@ -1,0 +1,688 @@
+Developed by Deepak Maurya
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>📐 Trigonometry • Class 9 • 50+ Quiz</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f2ecfa 0%, #d5c8ed 100%);
+      min-height: 100vh;
+      color: #1e1a2e;
+      padding: 12px;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(6px);
+      padding: 18px 20px;
+      text-align: center;
+      border-radius: 60px;
+      box-shadow: 0 12px 30px rgba(60, 30, 100, 0.10);
+      max-width: 1100px;
+      margin: 8px auto 18px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    header h1 {
+      color: #341f5e;
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    header h1 span {
+      background: #4a2c7a;
+      color: white;
+      font-size: 0.9rem;
+      padding: 6px 22px;
+      border-radius: 60px;
+      font-weight: 500;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 6px 30px;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeUp {
+      0% { opacity: 0.3; transform: translateY(12px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border-radius: 44px;
+      padding: 28px 24px;
+      margin-top: 20px;
+      box-shadow: 0 20px 50px rgba(50, 25, 100, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: 0.2s;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 18px;
+      margin: 24px 0 12px;
+    }
+
+    .menu-btn {
+      border: none;
+      background: white;
+      padding: 22px 8px;
+      border-radius: 36px;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #2d1b4e;
+      box-shadow: 0 8px 18px rgba(70, 40, 120, 0.06);
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid #e0d3f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .menu-btn:hover {
+      transform: scale(0.96) translateY(-4px);
+      background: #f5efff;
+      border-color: #b197e0;
+      box-shadow: 0 16px 32px rgba(80, 40, 160, 0.12);
+    }
+
+    .menu-btn span {
+      display: block;
+      font-size: 2.8rem;
+      margin-bottom: 6px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .badge {
+      background: #4a2c7a;
+      color: white;
+      padding: 8px 22px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.04);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge.outline {
+      background: transparent;
+      color: #4a2c7a;
+      border: 2px solid #4a2c7a;
+    }
+
+    .question {
+      font-size: 1.9rem;
+      font-weight: 700;
+      text-align: center;
+      margin: 12px 0 16px;
+      color: #1f1433;
+      line-height: 1.3;
+    }
+
+    .formula-box {
+      background: #ede5ff;
+      padding: 20px 12px;
+      border-radius: 60px;
+      margin: 8px 0 20px;
+      font-size: 2.2rem;
+      text-align: center;
+      font-weight: 600;
+      color: #2a1b44;
+      letter-spacing: 0.3px;
+      border: 2px dashed #b197e0;
+      word-break: break-word;
+    }
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 18px 0 14px;
+    }
+
+    .option {
+      background: white;
+      border: 2px solid #dacbf0;
+      border-radius: 60px;
+      padding: 18px 10px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.15s;
+      text-align: center;
+      color: #1f1433;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.02);
+    }
+
+    .option:hover {
+      background: #ede5ff;
+      transform: scale(0.97);
+      border-color: #8f74c7;
+    }
+
+    .correct {
+      background: #b8e0b8 !important;
+      border-color: #2b7a2b !important;
+      color: #0a3d0a;
+    }
+
+    .wrong {
+      background: #f8cfcf !important;
+      border-color: #b13e3e !important;
+      color: #630f0f;
+    }
+
+    .feedback {
+      min-height: 54px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-align: center;
+      padding: 10px 6px;
+      margin: 10px 0;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 60px;
+    }
+
+    .btn {
+      border: none;
+      background: #4a2c7a;
+      color: white;
+      padding: 12px 30px;
+      border-radius: 60px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: 0.15s;
+      margin: 6px 8px 6px 0;
+      box-shadow: 0 8px 16px rgba(60, 30, 100, 0.12);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .btn:hover {
+      background: #3a1f63;
+      transform: scale(0.97);
+    }
+
+    .btn.home { background: #6b4f9b; }
+    .btn.next { background: #2f7a4b; }
+    .btn.speak { background: #b2772b; }
+
+    .progress {
+      height: 14px;
+      background: #ddd2ec;
+      border-radius: 60px;
+      overflow: hidden;
+      margin: 18px 0 22px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6b4f9b, #a17fd6);
+      transition: 0.4s ease;
+    }
+
+    .result {
+      text-align: center;
+      padding: 20px 8px;
+    }
+
+    .result h2 { font-size: 2.8rem; color: #2d1b4e; }
+    .star { font-size: 4.8rem; line-height: 1.2; }
+
+    .stat-row {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      margin: 12px 0;
+    }
+    .stat-item {
+      background: #f0eaff;
+      padding: 6px 24px;
+      border-radius: 60px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      header h1 { font-size: 1.6rem; }
+      .card { padding: 18px 14px; }
+      .options { grid-template-columns: 1fr; }
+      .question { font-size: 1.4rem; }
+      .formula-box { font-size: 1.6rem; }
+      .menu-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      📐 Trigonometry · Class 9
+      <span>50+ formula quiz</span>
+    </h1>
+  </header>
+
+  <div class="container">
+
+    <!-- HOME -->
+    <div id="home" class="screen active">
+      <div class="card">
+        <h2 style="text-align:center; font-size: 2rem;">🧠 Choose your challenge</h2>
+        <div class="menu-grid">
+          <button class="menu-btn" onclick="startQuiz('identities')"><span>🔁</span> Identities</button>
+          <button class="menu-btn" onclick="startQuiz('ratios')"><span>📊</span> Ratios</button>
+          <button class="menu-btn" onclick="startQuiz('angles')"><span>📐</span> Angles</button>
+          <button class="menu-btn" onclick="startQuiz('all')"><span>⚡</span> All 50+</button>
+        </div>
+        <div style="margin-top: 24px; text-align:center; background: #efe7fb; border-radius: 80px; padding: 14px 18px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px;">
+          <span style="font-weight:600;">🏆 Best score </span>
+          <span id="bestScore" style="font-size: 2.2rem; font-weight:800; color:#4a2c7a;">0</span>
+          <span style="font-size:1.5rem;">⭐</span>
+          <button class="btn" style="padding: 6px 20px; font-size:0.8rem; background:#7a5faa;" onclick="resetScore()">reset</button>
+        </div>
+        <div style="text-align:center; margin-top: 14px; color: #4f3a74;">
+          <span>📚 50+ unique questions · 3 lives · keep learning!</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="quiz" class="screen">
+      <div class="card">
+        <div class="topbar">
+          <span class="badge" id="gameTitle">📐 Trigonometry</span>
+          <span class="badge">⭐ <span id="score">0</span></span>
+          <span class="badge">❤️ <span id="lives">3</span></span>
+        </div>
+        <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="question" id="question"></div>
+        <div class="formula-box" id="formulaDisplay">sin²θ + cos²θ = 1</div>
+        <div style="text-align:center; margin-bottom: 6px;">
+          <button class="btn speak" onclick="speakQuestion()">🔊 Listen</button>
+        </div>
+        <div class="options" id="options"></div>
+        <div class="feedback" id="feedback"></div>
+        <div style="text-align:center;">
+          <button class="btn next" id="nextBtn" onclick="nextQuestion()" style="display:none;">Next ➜</button>
+          <button class="btn home" onclick="goHome()">🏠 Home</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULT -->
+    <div id="result" class="screen">
+      <div class="card result">
+        <div class="star">🏆</div>
+        <h2>Great effort!</h2>
+        <p style="font-size:1.8rem; margin:10px;">Your score</p>
+        <p style="font-size:3.8rem; font-weight:800;" id="finalScore">0 ⭐</p>
+        <div class="stat-row">
+          <span class="stat-item">✅ <span id="resultCorrect">0</span> correct</span>
+          <span class="stat-item">❌ <span id="resultWrong">0</span> wrong</span>
+        </div>
+        <p id="resultMessage" style="font-size:1.4rem; margin:16px;"></p>
+        <button class="btn" onclick="goHome()">🏠 Play Again</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // --------------------------------------------------------------
+    //  TRIGONOMETRY FORMULA DATASET  (50+ unique items)
+    // --------------------------------------------------------------
+    const formulaDB = {
+
+      identities: [
+        { q: 'sin²θ + cos²θ = ?', a: '1' },
+        { q: '1 + tan²θ = ?', a: 'sec²θ' },
+        { q: '1 + cot²θ = ?', a: 'cosec²θ' },
+        { q: 'sec²θ - tan²θ = ?', a: '1' },
+        { q: 'cosec²θ - cot²θ = ?', a: '1' },
+        { q: 'sin θ / cos θ = ?', a: 'tan θ' },
+        { q: 'cos θ / sin θ = ?', a: 'cot θ' },
+        { q: '1 / sin θ = ?', a: 'cosec θ' },
+        { q: '1 / cos θ = ?', a: 'sec θ' },
+        { q: '1 / tan θ = ?', a: 'cot θ' },
+        { q: 'tan θ · cot θ = ?', a: '1' },
+        { q: 'sin θ · cosec θ = ?', a: '1' },
+        { q: 'cos θ · sec θ = ?', a: '1' },
+        { q: '(sin θ + cos θ)² = ?', a: '1 + 2sinθ cosθ' },
+        { q: '(sin θ - cos θ)² = ?', a: '1 - 2sinθ cosθ' },
+      ],
+
+      ratios: [
+        { q: 'sin θ = opposite / ?', a: 'hypotenuse' },
+        { q: 'cos θ = adjacent / ?', a: 'hypotenuse' },
+        { q: 'tan θ = opposite / ?', a: 'adjacent' },
+        { q: 'cosec θ = 1 / ?', a: 'sin θ' },
+        { q: 'sec θ = 1 / ?', a: 'cos θ' },
+        { q: 'cot θ = 1 / ?', a: 'tan θ' },
+        { q: 'tan θ = sin θ / ?', a: 'cos θ' },
+        { q: 'cot θ = cos θ / ?', a: 'sin θ' },
+        { q: 'sin θ = cos(90° - ?)', a: 'θ' },
+        { q: 'cos θ = sin(90° - ?)', a: 'θ' },
+        { q: 'tan θ = cot(90° - ?)', a: 'θ' },
+        { q: 'cosec θ = sec(90° - ?)', a: 'θ' },
+      ],
+
+      angles: [
+        { q: 'sin 0° = ?', a: '0' },
+        { q: 'cos 0° = ?', a: '1' },
+        { q: 'sin 30° = ?', a: '1/2' },
+        { q: 'cos 30° = ?', a: '√3/2' },
+        { q: 'tan 30° = ?', a: '1/√3' },
+        { q: 'sin 45° = ?', a: '1/√2' },
+        { q: 'cos 45° = ?', a: '1/√2' },
+        { q: 'tan 45° = ?', a: '1' },
+        { q: 'sin 60° = ?', a: '√3/2' },
+        { q: 'cos 60° = ?', a: '1/2' },
+        { q: 'tan 60° = ?', a: '√3' },
+        { q: 'sin 90° = ?', a: '1' },
+        { q: 'cos 90° = ?', a: '0' },
+        { q: 'tan 0° = ?', a: '0' },
+        { q: 'cot 30° = ?', a: '√3' },
+        { q: 'sec 60° = ?', a: '2' },
+        { q: 'cosec 30° = ?', a: '2' },
+        { q: 'cot 45° = ?', a: '1' },
+        { q: 'sec 0° = ?', a: '1' },
+        { q: 'cosec 90° = ?', a: '1' },
+      ],
+
+      extra: [
+        { q: 'sin(A+B) = sinA cosB + ?', a: 'cosA sinB' },
+        { q: 'cos(A+B) = cosA cosB - ?', a: 'sinA sinB' },
+        { q: 'sin(A-B) = sinA cosB - ?', a: 'cosA sinB' },
+        { q: 'cos(A-B) = cosA cosB + ?', a: 'sinA sinB' },
+        { q: 'tan(A+B) = (tanA + tanB) / (1 - ?)', a: 'tanA tanB' },
+        { q: 'tan(A-B) = (tanA - tanB) / (1 + ?)', a: 'tanA tanB' },
+        { q: 'sin 2θ = 2 sinθ ?', a: 'cosθ' },
+        { q: 'cos 2θ = cos²θ - ?', a: 'sin²θ' },
+        { q: 'cos 2θ = 2cos²θ - ?', a: '1' },
+        { q: 'cos 2θ = 1 - 2?', a: 'sin²θ' },
+        { q: 'tan 2θ = 2tanθ / (1 - ?)', a: 'tan²θ' },
+      ]
+    };
+
+    // --------------------------------------------------------------
+    //  GAME STATE
+    // --------------------------------------------------------------
+    let currentSet = [];
+    let currentIndex = 0;
+    let score = 0;
+    let lives = 3;
+    let answered = false;
+    let gameMode = 'identities';
+    let correctCount = 0;
+    let wrongCount = 0;
+
+    // --------------------------------------------------------------
+    //  UI HELPERS
+    // --------------------------------------------------------------
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function goHome() {
+      showScreen('home');
+      updateBestScore();
+    }
+
+    // --------------------------------------------------------------
+    //  START QUIZ
+    // --------------------------------------------------------------
+    function startQuiz(mode) {
+      gameMode = mode;
+      score = 0;
+      lives = 3;
+      currentIndex = 0;
+      answered = false;
+      correctCount = 0;
+      wrongCount = 0;
+
+      let pool = [];
+      if (mode === 'all') {
+        Object.keys(formulaDB).forEach(key => {
+          pool = pool.concat(formulaDB[key]);
+        });
+        pool = shuffleArray(pool);
+      } else {
+        pool = shuffleArray([...formulaDB[mode]]);
+      }
+      // take up to 15 questions per round (but we have 50+ in pool)
+      const limit = Math.min(15, pool.length);
+      currentSet = pool.slice(0, limit);
+
+      showScreen('quiz');
+      document.getElementById('gameTitle').innerText = getTitle(mode);
+      document.getElementById('score').innerText = score;
+      document.getElementById('lives').innerText = lives;
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('feedback').innerText = '';
+      loadQuestion();
+    }
+
+    function getTitle(mode) {
+      const map = {
+        identities: '🔁 Identities',
+        ratios: '📊 Ratios',
+        angles: '📐 Angles',
+        all: '⚡ All 50+'
+      };
+      return map[mode] || '📐 Trigonometry';
+    }
+
+    function shuffleArray(arr) {
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // --------------------------------------------------------------
+    //  LOAD QUESTION
+    // --------------------------------------------------------------
+    function loadQuestion() {
+      if (currentIndex >= currentSet.length) {
+        finishQuiz();
+        return;
+      }
+
+      answered = false;
+      document.getElementById('nextBtn').style.display = 'none';
+      document.getElementById('feedback').innerText = '';
+      document.getElementById('score').innerText = score;
+      document.getElementById('lives').innerText = lives;
+
+      const progress = (currentIndex / currentSet.length) * 100;
+      document.getElementById('progressBar').style.width = progress + '%';
+
+      const item = currentSet[currentIndex];
+      document.getElementById('question').innerText = item.q;
+      document.getElementById('formulaDisplay').innerText = item.q;
+
+      // Build options: 1 correct + 3 distractors
+      let options = [item.a];
+      const allAnswers = extractAllAnswers();
+      const candidates = shuffleArray(allAnswers.filter(ans => ans !== item.a));
+
+      for (let i = 0; i < Math.min(3, candidates.length); i++) {
+        if (!options.includes(candidates[i])) {
+          options.push(candidates[i]);
+        }
+      }
+
+      // fallback pool
+      const fallbacks = ['1', '0', 'sin θ', 'cos θ', 'tan θ', 'cot θ', 'sec θ', 'cosec θ', 
+                         '√3/2', '1/2', '1/√2', 'hypotenuse', 'adjacent', 'opposite', 
+                         'sinA cosB', 'cosA sinB', 'tanA tanB', 'sin²θ', 'cos²θ'];
+      while (options.length < 4) {
+        const fb = fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        if (!options.includes(fb)) options.push(fb);
+      }
+
+      options = shuffleArray(options);
+
+      const container = document.getElementById('options');
+      container.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = opt;
+        btn.onclick = () => checkAnswer(btn, opt, item.a);
+        container.appendChild(btn);
+      });
+    }
+
+    function extractAllAnswers() {
+      const set = new Set();
+      Object.keys(formulaDB).forEach(key => {
+        formulaDB[key].forEach(item => set.add(item.a));
+      });
+      return Array.from(set);
+    }
+
+    // --------------------------------------------------------------
+    //  CHECK ANSWER
+    // --------------------------------------------------------------
+    function checkAnswer(button, selected, correct) {
+      if (answered) return;
+      answered = true;
+
+      if (selected === correct) {
+        button.classList.add('correct');
+        score += 10;
+        correctCount++;
+        document.getElementById('feedback').innerHTML = '✅ Perfect! +10 ⭐';
+        speak('Correct! Well done.');
+      } else {
+        button.classList.add('wrong');
+        lives--;
+        wrongCount++;
+        document.getElementById('feedback').innerHTML = `😊 Correct answer: <strong>${correct}</strong>`;
+        speak(`The correct answer is ${correct}`);
+        document.getElementById('lives').innerText = lives;
+        document.querySelectorAll('.option').forEach(btn => {
+          if (btn.innerText === correct) btn.classList.add('correct');
+        });
+      }
+
+      document.getElementById('score').innerText = score;
+      document.getElementById('nextBtn').style.display = 'inline-block';
+
+      if (lives <= 0) {
+        setTimeout(finishQuiz, 900);
+      }
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      loadQuestion();
+    }
+
+    // --------------------------------------------------------------
+    //  SPEAK
+    // --------------------------------------------------------------
+    function speakQuestion() {
+      const q = document.getElementById('question').innerText;
+      speak(q);
+    }
+
+    function speak(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const msg = new SpeechSynthesisUtterance(text);
+      msg.lang = 'en-US';
+      msg.rate = 0.85;
+      msg.pitch = 1.0;
+      window.speechSynthesis.speak(msg);
+    }
+
+    // --------------------------------------------------------------
+    //  FINISH
+    // --------------------------------------------------------------
+    function finishQuiz() {
+      saveBestScore(score);
+      document.getElementById('finalScore').innerText = score + ' ⭐';
+      document.getElementById('resultCorrect').innerText = correctCount;
+      document.getElementById('resultWrong').innerText = wrongCount;
+
+      let msg = '';
+      if (score >= 120) msg = '🌟 Trigonometry legend! Outstanding!';
+      else if (score >= 80) msg = '👏 Great job! You know your formulas!';
+      else if (score >= 50) msg = '💪 Good effort! Keep practising!';
+      else msg = '📖 Keep learning, every master was once a beginner.';
+      document.getElementById('resultMessage').innerText = msg;
+      showScreen('result');
+    }
+
+    // --------------------------------------------------------------
+    //  BEST SCORE (localStorage)
+    // --------------------------------------------------------------
+    function saveBestScore(newScore) {
+      const best = parseInt(localStorage.getItem('trigoBestScore') || '0');
+      if (newScore > best) localStorage.setItem('trigoBestScore', newScore);
+    }
+
+    function updateBestScore() {
+      const best = localStorage.getItem('trigoBestScore') || '0';
+      document.getElementById('bestScore').innerText = best;
+    }
+
+    function resetScore() {
+      localStorage.removeItem('trigoBestScore');
+      updateBestScore();
+      alert('🏁 Best score has been reset.');
+    }
+
+    // --------------------------------------------------------------
+    //  INIT
+    // --------------------------------------------------------------
+    updateBestScore();
+  </script>
+</body>
+</html>
+```
